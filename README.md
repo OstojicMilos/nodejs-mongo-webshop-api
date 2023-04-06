@@ -38,7 +38,7 @@ This command builds the Docker images and starts the containers. The app will be
 
 ## How to Use
 
-- There is another repository of mine with a React app that directly communicates with this API. Alternatively, you can use Postman, curl, or develop your own app to call these APIs.
+- There is another repository of mine with a React app that directly communicates with this API [https://github.com/OstojicMilos/react-TS-SCSS-webshop](https://github.com/OstojicMilos/react-TS-SCSS-webshop). Alternatively, you can use Postman, curl, or develop your own app to call these APIs.
 
 
 
