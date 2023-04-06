@@ -1,0 +1,23 @@
+{
+  "name": "express-with-mongoose",
+  "version": "1.0.0",
+  "description": "Express js app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^3.1.6",
+    "mongoose": "^5.2.17"
+  }
+}

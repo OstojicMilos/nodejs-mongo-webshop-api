@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+      - '9229:9229'
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+    command: npx nodemon --inspect=0.0.0.0:9229 app.js
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - '27017:27017'
+volumes:
+  mongo-data:
