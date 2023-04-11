@@ -2,23 +2,13 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 const User = require('../models/user');
 
-exports.getProducts = (_, res) => {
-  Product.find()
-    .then(products => {
-      res.json(products)
-    })
-    .catch(err => {
-      console.log(err);
-    });
+exports.getProducts = async (_, res) => {
+  res.json(await Product.find());
 };
 
-exports.getProduct = (req, res) => {
+exports.getProduct = async (req, res) => {
   const {productId} = req.params;
-  Product.findById(productId)
-    .then(product => {
-      res.json(product)
-    })
-    .catch(err => console.log(err));
+  res.json(await Product.findById(productId));
 };
 
 exports.getCart = (req, res) => {
@@ -30,61 +20,40 @@ exports.getCart = (req, res) => {
     });
 };
 
-exports.postCart = (req, res) => {
-  User.findById(req.user.userId)
-    .then(user => {
-      return user.addToCart(req.body.productId)
-    })
-    .then(_ => {
-      res.json({message: "Product added"})
-    });
+exports.postCart = async (req, res) => {
+  const user = await User.findById(req.user.userId);
+  await user.addToCart(req.body.productId);
+  res.json({message: "Product added"});
 };
 
-exports.deleteCartItem = (req, res) => {
-  User.findById(req.user.userId)
-    .then(user => {
-      return user.deleteItemFromCart(req.params.productId)
-    })
-    .then(_ => {
-      res.json({})
-    })
-    .catch(err => console.log(err));
+exports.deleteCartItem = async (req, res) => {
+  const user = await User.findById(req.user.userId);
+  await user.deleteItemFromCart(req.params.productId);
+  res.json({});
 };
 
-exports.postOrder = (req, res) => {
-  (async () => {
-    try {
-      const user = await User.findById(req.user.userId)
+exports.postOrder = async (req, res) => {
+  const user = await User.findById(req.user.userId)
         .populate('cart.items.product')
         .exec();
 
-      const products = user.cart.items.map(i => ({
-        quantity: i.quantity,
-        product: { ...i.product._doc },
-      }));
+  const products = user.cart.items.map(i => ({
+    quantity: i.quantity,
+    product: { ...i.product._doc },
+  }));
 
-      const order = new Order({
-        user: {
-          name: user.name,
-          user,
-        },
-        products,
-      });
+  const order = new Order({
+    user: { name: user.name, user },
+    products,
+  });
 
-      await order.save();
-      await user.emptyCart();
+  await order.save();
+  await user.emptyCart();
 
-      res.json({});
-    } catch (err) {
-      console.log(err);
-    }
-  })();
+  res.json({});
 };
 
-exports.getOrders = (req, res) => {
-  Order.find({ 'user.user': req.user.userId })
-    .then(orders => {
-      res.json(orders)
-    })
-    .catch(err => console.log(err));
+exports.getOrders = async (req, res) => {
+  const orders = await Order.find({ 'user.user': req.user.userId });
+  res.json(orders);
 };

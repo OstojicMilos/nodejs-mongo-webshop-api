@@ -1,43 +1,25 @@
 const Product = require('../models/product');
 
-exports.addProduct = (req, res) => {
+exports.addProduct = async (req, res) => {
   const product = new Product({ ...req.body, user: req.user._id });
-  product
-    .save(req.body)
-    .then(() => {
-      res.status(201).json(product);
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  await product.save(req.body);
+  res.status(201).json(product);
 };
 
-exports.editProduct = (req, res, next) => {
-  const productId = req.body._id;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
+exports.editProduct = async ({body}, res) => {
+  const { _id: productId, title, price, imageUrl, description } = body;
 
-  Product.findById(productId).then(product => {
-    product.title = updatedTitle;
-    product.price = updatedPrice;
-    product.imageUrl = updatedImageUrl;
-    product.description = updatedDesc;
-    product
-    .save()
-    .then(() => {
-      res.status(200).json(product);
-    })
-    .catch(err => console.log(err));
-  });  
+  const product = await Product.findById(productId);
+  product.title = title;
+  product.price = price;
+  product.imageUrl = imageUrl;
+  product.description = description;
+  await product.save()
+  res.status(200).json(product);  
 };
 
-exports.deleteProduct = (req, res, next) => {
+exports.deleteProduct = async (req, res) => {
   const {productId} = req.params;
-  Product.findByIdAndDelete(productId)
-    .then(() => {
-      res.json({ message: `Product with the id of ${productId} has been deleted`});
-    })
-    .catch(err => console.log(err));
+  await Product.findByIdAndDelete(productId);
+  res.json({ message: `Product with the id of ${productId} has been deleted`});
 };
